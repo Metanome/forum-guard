@@ -12,6 +12,11 @@ class SettingsCog(commands.Cog):
 
     guard = app_commands.Group(name="guard", description="Configure ForumGuard moderation settings.", default_permissions=discord.Permissions(manage_guild=True))
 
+    # Nested command groups
+    channel_group = app_commands.Group(name="channel", description="Manage monitored forum channels.", parent=guard)
+    role_group = app_commands.Group(name="role", description="Manage support roles.", parent=guard)
+    settings_group = app_commands.Group(name="settings", description="Manage bot settings.", parent=guard)
+
     @guard.command(name="help", description="Shows a list of all available commands.")
     async def help_command(self, interaction: discord.Interaction):
         embed = discord.Embed(
@@ -32,7 +37,7 @@ class SettingsCog(commands.Cog):
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @guard.command(name="channel_add", description="Start moderating a forum channel.")
+    @channel_group.command(name="add", description="Start moderating a forum channel.")
     @app_commands.describe(channel="The forum channel to add.")
     @app_commands.checks.has_permissions(manage_guild=True)
     async def add_channel(self, interaction: discord.Interaction, channel: ForumChannel):
@@ -47,7 +52,7 @@ class SettingsCog(commands.Cog):
             embed = embed_factory.error_embed("Already Added", f"{channel.mention} is already being monitored.")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @guard.command(name="channel_remove", description="Stop moderating a forum channel.")
+    @channel_group.command(name="remove", description="Stop moderating a forum channel.")
     @app_commands.describe(channel="The forum channel to remove.")
     @app_commands.checks.has_permissions(manage_guild=True)
     async def remove_channel(self, interaction: discord.Interaction, channel: ForumChannel):
@@ -62,7 +67,7 @@ class SettingsCog(commands.Cog):
             embed = embed_factory.error_embed("Not Found", f"{channel.mention} was not on the list of monitored channels.")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @guard.command(name="role_add", description="Add a role that can reply to any monitored thread.")
+    @role_group.command(name="add", description="Add a role that can reply to any monitored thread.")
     @app_commands.describe(role="The support role to add.")
     @app_commands.checks.has_permissions(manage_guild=True)
     async def add_role(self, interaction: discord.Interaction, role: Role):
@@ -77,7 +82,7 @@ class SettingsCog(commands.Cog):
             embed = embed_factory.error_embed("Already Added", f"{role.mention} is already a support role.")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @guard.command(name="role_remove", description="Remove a support role.")
+    @role_group.command(name="remove", description="Remove a support role.")
     @app_commands.describe(role="The support role to remove.")
     @app_commands.checks.has_permissions(manage_guild=True)
     async def remove_role(self, interaction: discord.Interaction, role: Role):
@@ -92,7 +97,7 @@ class SettingsCog(commands.Cog):
             embed = embed_factory.error_embed("Not Found", f"{role.mention} was not a support role.")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @guard.command(name="settings_dms", description="Enable or disable DM notifications for users whose messages are deleted.")
+    @settings_group.command(name="dms", description="Enable or disable DM notifications for users whose messages are deleted.")
     @app_commands.describe(enabled="Set to True to enable DMs, False to disable.")
     @app_commands.checks.has_permissions(manage_guild=True)
     async def settings_dms(self, interaction: discord.Interaction, enabled: bool):
@@ -105,7 +110,7 @@ class SettingsCog(commands.Cog):
         embed = embed_factory.success_embed("Settings Updated", f"DM notifications have been {status}.")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @guard.command(name="settings_view", description="Display the current configuration for ForumGuard.")
+    @settings_group.command(name="view", description="Display the current configuration for ForumGuard.")
     @app_commands.checks.has_permissions(manage_guild=True)
     async def view_settings(self, interaction: discord.Interaction):
         config = await db.get_guild_config(interaction.guild_id)
