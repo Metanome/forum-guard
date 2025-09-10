@@ -12,6 +12,26 @@ class SettingsCog(commands.Cog):
 
     guard = app_commands.Group(name="guard", description="Configure ForumGuard moderation settings.", default_permissions=discord.Permissions(manage_guild=True))
 
+    @guard.command(name="help", description="Shows a list of all available commands.")
+    async def help_command(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title="ForumGuard Commands",
+            description="Here is a list of available commands to configure the bot. You must have `Manage Server` permissions to use them.",
+            color=embed_factory.INFO_COLOR
+        )
+
+        embed.add_field(name="`/guard channel add <channel>`", value="Starts moderating a forum channel.", inline=False)
+        embed.add_field(name="`/guard channel remove <channel>`", value="Stops moderating a forum channel.", inline=False)
+        embed.add_field(name="`/guard role add <role>`", value="Adds a role that can reply in monitored threads.", inline=False)
+        embed.add_field(name="`/guard role remove <role>`", value="Removes a support role.", inline=False)
+        embed.add_field(name="`/guard settings dms <enabled>`", value="Enable or disable DM notifications for deleted messages.", inline=False)
+        embed.add_field(name="`/guard settings view`", value="Displays the current bot configuration for this server.", inline=False)
+        embed.add_field(name="`/guard help`", value="Shows this help message.", inline=False)
+
+        embed.set_footer(text="Developed by Dr. Skinner • ForumGuard | A specialized bot for moderating forum channel replies.")
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
     @guard.command(name="channel_add", description="Start moderating a forum channel.")
     @app_commands.describe(channel="The forum channel to add.")
     @app_commands.checks.has_permissions(manage_guild=True)

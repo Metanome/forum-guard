@@ -9,6 +9,18 @@ ForumGuard is a specialized Discord bot for moderating forum channels. It restri
 - Highly configurable through intuitive slash commands (`/guard`).
 - All settings are stored in a persistent SQLite database.
 
+## Commands
+
+All commands are grouped under the `/guard` namespace and require the `Manage Server` permission.
+
+- `/guard channel add <channel>`: Adds a forum channel to the moderation list.
+- `/guard channel remove <channel>`: Removes a forum channel from the moderation list.
+- `/guard role add <role>`: Adds a role to the support team, allowing members with this role to reply in any monitored thread.
+- `/guard role remove <role>`: Removes a role from the support team.
+- `/guard settings dms <enabled>`: Toggles whether the bot sends a DM to users when their reply is deleted.
+- `/guard settings view`: Displays the current configuration for the server in a detailed embed.
+- `/guard help`: Shows a list of all available commands, including developer information in the footer.
+
 ## Local Development & Testing
 
 To run the bot on your local machine for testing:
