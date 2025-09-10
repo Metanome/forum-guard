@@ -1,19 +1,12 @@
-# render.yaml
-
-disks:
-  - name: forum-guard-data
-    mountPath: /data
-    sizeGB: 1
+# render.yaml (Minimal for diagnostics)
 
 services:
   - type: worker
     name: forum-guard
     env: python
-    pythonVersion: "3.9"
+    plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python main.py"
     envVars:
-      - key: DATABASE_PATH
-        value: /data/database.sqlite3
-      - key: LOG_PATH
-        value: /data/bot.log
+      - key: DISCORD_BOT_TOKEN
+        sync: false # This must be set in the Render dashboard
