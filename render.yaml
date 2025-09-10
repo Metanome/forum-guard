@@ -1,12 +1,16 @@
-# render.yaml (Minimal for diagnostics)
-
 services:
   - type: worker
     name: forum-guard
-    env: python
-    plan: free
+    runtime: python
+    plan: starter # NOTE: This is a paid plan, as required for workers.
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python main.py"
+    disk:
+      name: forum-guard-data
+      mountPath: /data
+      sizeGB: 1
     envVars:
-      - key: DISCORD_BOT_TOKEN
-        sync: false # This must be set in the Render dashboard
+      - key: DATABASE_PATH
+        value: /data/database.sqlite3
+      - key: LOG_PATH
+        value: /data/bot.log
