@@ -1,0 +1,17 @@
+services:
+  - type: worker # Use 'worker' for a background process like a Discord bot
+    name: forum-guard
+    env: python
+    plan: free # Or 'starter' if you need more resources
+    pythonVersion: "3.9"
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python main.py"
+    disks:
+      - name: forum-guard-data
+        mountPath: /data
+        sizeGB: 1
+    envVars:
+      - key: DATABASE_PATH
+        value: /data/database.sqlite3
+      - key: LOG_PATH
+        value: /data/bot.log
