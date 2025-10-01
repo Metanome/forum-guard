@@ -50,7 +50,10 @@ class ForumGuardBot(commands.Bot):
         super().__init__(*args, **kwargs)
         self.initial_cogs = [
             'cogs.settings',
-            'cogs.moderation'
+            'cogs.moderation',
+            'cogs.lifecycle',
+            'cogs.solutions',
+            'cogs.escalation'
         ]
 
     async def setup_hook(self):

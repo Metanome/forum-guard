@@ -62,3 +62,66 @@ def dm_notification_embed(thread: discord.Thread) -> discord.Embed:
     )
     embed.set_footer(text=f"Server: {thread.guild.name}")
     return embed
+
+def thread_closed_embed(user: discord.Member) -> discord.Embed:
+    """Creates the embed posted when a thread is automatically closed."""
+    message = (
+        "🔒 This thread has been marked as solved and archived.\n\n"
+        + "If you need further help, please create a new thread."
+    )
+    embed = discord.Embed(
+        title="Thread Closed",
+        description=message,
+        color=SUCCESS_COLOR
+    )
+    embed.set_footer(text=f"Marked as solved by {user.display_name}")
+    return embed
+
+def thread_reopened_embed() -> discord.Embed:
+    """Creates the embed posted when a thread is automatically reopened."""
+    message = (
+        "🔓 This thread has been reopened.\n\n"
+        + "The solution tag was removed and the thread is now active again."
+    )
+    embed = discord.Embed(
+        title="Thread Reopened",
+        description=message,
+        color=INFO_COLOR
+    )
+    return embed
+
+def solution_marked_embed(message: discord.Message, marked_by: discord.Member, category: str) -> discord.Embed:
+    """Creates the embed posted when a message is marked as a solution."""
+    category_emoji = "✅" if category == "solution" else "💡"
+    category_title = "Solution" if category == "solution" else "Helpful Answer"
+    
+    embed = discord.Embed(
+        title=f"{category_emoji} {category_title} Marked",
+        description=f"A message by {message.author.mention} has been marked as a {category} by {marked_by.mention}.",
+        color=SUCCESS_COLOR
+    )
+    
+    message_preview = message.content[:200] + "..." if len(message.content) > 200 else message.content
+    embed.add_field(name="Message", value=f"[Jump to message]({message.jump_url})\n{message_preview}", inline=False)
+    
+    return embed
+
+def solution_closure_suggestion_embed(solution_message: discord.Message) -> discord.Embed:
+    """Creates the embed suggesting thread closure after a solution is marked."""
+    embed = discord.Embed(
+        title="💡 Consider Marking as Solved",
+        description=(
+            "A solution has been marked in this thread! If this resolves your issue, "
+            "consider applying a solution tag to close and archive this thread.\n\n"
+            "This will help keep the forum organized and let others know the issue is resolved."
+        ),
+        color=INFO_COLOR
+    )
+    
+    embed.add_field(
+        name="Marked Solution", 
+        value=f"[Jump to solution]({solution_message.jump_url})", 
+        inline=False
+    )
+    
+    return embed

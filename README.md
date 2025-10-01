@@ -1,76 +1,101 @@
 # ForumGuard
 
-ForumGuard is a specialized Discord bot for moderating forum channels. It restricts reply permissions to the original poster (OP) and designated support roles, ensuring that forum threads remain focused and on-topic.
+ForumGuard is a Discord bot designed to moderate forum channels. It restricts reply permissions to the original poster (OP) and designated support roles, provides automated escalation for unanswered threads, and manages thread lifecycle based on solution tags.
 
-## Core Features
+## Features
 
-- Restricts replies in forum threads to the OP and configured support roles.
-- Deletes unauthorized replies and optionally notifies the user via DM.
-- Highly configurable through intuitive slash commands (`/guard`).
-- All settings are stored in a persistent SQLite database.
+- **Access Control**: Restricts replies in forum threads to OP and configured support roles
+- **Solution Management**: Automatic thread archiving/unarchiving based on solution tags
+- **Escalation System**: Automated escalation for stale threads with configurable timeouts
+- **Configuration**: Slash command interface with persistent SQLite database storage
 
 ## Commands
 
-All commands are grouped under the `/guard` namespace and require the `Manage Server` permission.
+All commands require the `Manage Server` permission and are organized under the `/forum` namespace:
 
-- `/guard channel add <channel>`: Adds a forum channel to the moderation list.
-- `/guard channel remove <channel>`: Removes a forum channel from the moderation list.
-- `/guard role add <role>`: Adds a role to the support team, allowing members with this role to reply in any monitored thread.
-- `/guard role remove <role>`: Removes a role from the support team.
-- `/guard settings dms <enabled>`: Toggles whether the bot sends a DM to users when their reply is deleted.
-- `/guard settings view`: Displays the current configuration for the server in a detailed embed.
-- `/guard help`: Shows a list of all available commands, including developer information in the footer.
+**Channel Management**
+- `/forum channel add <channel>` - Monitor a forum channel
+- `/forum channel remove <channel>` - Stop monitoring a channel
 
-## Local Development & Testing
+**Role Configuration**
+- `/forum role add <role>` - Add support role with reply permissions
+- `/forum role remove <role>` - Remove support role
 
-To run the bot on your local machine for testing:
+**Solution Tag Management**
+- `/forum tags add <forum> <tag>` - Configure solution tag for forum
+- `/forum tags remove <forum> <tag>` - Remove solution tag
+- `/forum tags list` - View all configured solution tags
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <repository_url>
-    cd forum-guard
-    ```
+**Escalation Configuration**
+- `/forum escalation setup` - Configure automated escalation system
+- `/forum escalation view` - View current escalation settings
+- `/forum escalation reset` - Reset escalation states
 
-2.  **Set up a Python virtual environment:**
-    ```bash
-    python -m venv .venv
-    source .venv/bin/activate  # On Windows use `.venv\Scripts\activate`
-    ```
+**Settings & Utilities**
+- `/forum settings dms <enabled>` - Toggle DM notifications
+- `/forum settings view` - Display complete server configuration
+- `/forum help` - Show detailed command reference
 
-3.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+## Local Development
 
-4.  **Create an environment file:**
-    - Create a file named `.env` in the root of the project.
-    - Add your Discord bot token to this file:
-      ```
-      DISCORD_BOT_TOKEN=YourBotTokenGoesHere
-      ```
+### Prerequisites
+- Python 3.9 or higher
+- Discord bot token with appropriate permissions
 
-5.  **Run the bot:**
-    ```bash
-    python main.py
-    ```
+### Setup Instructions
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Metanome/forum-guard.git
+   cd forum-guard
+   ```
+
+2. **Create and activate virtual environment:**
+   ```bash
+   python -m venv .venv
+   
+   # Windows
+   .venv\Scripts\activate
+   
+   # macOS/Linux
+   source .venv/bin/activate
+   ```
+
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Configure environment:**
+   ```bash
+   # Create .env file
+   echo "DISCORD_BOT_TOKEN=your_bot_token_here" > .env
+   ```
+
+5. **Run the bot:**
+   ```bash
+   python main.py
+   ```
 
 ## Deployment
 
-This bot is designed to be deployed on a hosting service that supports persistent background workers.
+### Render (Recommended)
 
-### Recommended: Render
+The repository includes production-ready configuration for [Render](https://render.com/) deployment:
 
-The repository includes a `render.yaml` file configured for deployment on [Render](https://render.com/).
+1. Fork this repository to your GitHub account
+2. Create a new Blueprint service in Render Dashboard
+3. Connect your forked repository - Render will auto-detect `render.yaml`
+4. Configure environment variables:
+   - `DISCORD_BOT_TOKEN`: Your Discord bot token
+5. Deploy - The service will automatically build and start
 
-**Important:** Due to the bot's nature as a 24/7 background worker that requires persistent storage for its database, a paid plan on Render is required. The `render.yaml` is pre-configured to use the **`starter` plan**.
+**Note:** Requires Render's paid "Starter" plan for persistent disk storage.
 
-**Deployment Steps:**
+### Other Platforms
 
-1.  Fork this repository to your own GitHub account.
-2.  In the Render Dashboard, create a new **Blueprint** service and connect it to your forked repository.
-3.  Render will automatically detect the `render.yaml` file and configure the service.
-4.  Before the first deploy, go to the **Environment** tab for your new service.
-5.  Add a new **Secret Variable**:
-    - **Key:** `DISCORD_BOT_TOKEN`
-    - **Value:** Paste your actual Discord bot token here.
-6.  Deploy the service. Render will build and run the bot, and the SQLite database and log file will be stored on the persistent disk attached to the service.
+ForumGuard can be deployed on any platform supporting:
+- Python 3.9+ runtime
+- Persistent file storage for SQLite database
+- 24/7 background process execution
+- Environment variable configuration
